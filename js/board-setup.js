@@ -589,23 +589,8 @@ class ChessBoardSetup {
 let chessBoard;
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Setting up chess board...");
-    
-    // Đợi DOM load hoàn tất
-    setTimeout(() => {
-        chessBoard = new ChessBoardSetup();
-        console.log("Chess board ready!");
-        
-        // Gắn sự kiện cho nút New Game
-        const newGameBtn = document.querySelector('[onclick="newGame()"]');
-        if (newGameBtn) {
-            newGameBtn.onclick = function() {
-                if (chessBoard) {
-                    chessBoard.resetBoard();
-                }
-            };
-        }
-    }, 500);
+    console.log("⚠️ board-setup.js initialization skipped to avoid conflicts with hoan-chinh-co-tuong.js");
+    return;
 });
 
 // Export để sử dụng global

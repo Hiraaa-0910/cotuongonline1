@@ -249,11 +249,12 @@
             <div class="ai-level-selector" id="aiLevelSelector">
                 <h4><i class="fas fa-brain"></i> Cấp độ AI</h4>
                 <div class="level-buttons">
-                    <button class="level-btn" data-level="1" onclick="setAILevel(1)">Dễ</button>
-                    <button class="level-btn" data-level="2" onclick="setAILevel(2)">TB</button>
-                    <button class="level-btn active" data-level="3" onclick="setAILevel(3)">Khá</button>
-                    <button class="level-btn" data-level="4" onclick="setAILevel(4)">Khó</button>
-                    <button class="level-btn" data-level="5" onclick="setAILevel(5)">Cao thủ</button>
+                   <button class="ai-level-btn active" data-level="1">Dễ</button>
+                    <button class="ai-level-btn" data-level="2">TB</button>
+                    <button class="ai-level-btn" data-level="3">Khá</button>
+                    <button class="ai-level-btn" data-level="4">Khó</button>
+                    <button class="ai-level-btn" data-level="5">Cao thủ</button>
+
                 </div>
             </div>
             
@@ -339,20 +340,6 @@
                     <button class="btn btn-danger" onclick="surrender()">
                         <i class="fas fa-flag"></i> Đầu hàng
                     </button>
-                    <button class="btn btn-success" onclick="saveGame()">
-                        <i class="fas fa-save"></i> Lưu ván
-                    </button>
-					
-					<button class="btn btn-info" onclick="showTutorial()">
-						<i class="fas fa-question-circle"></i> Hướng dẫn
-					</button>
-
-					<button class="btn btn-hint" onclick="showHint()">
-						<i class="fas fa-lightbulb"></i> Gợi ý
-					</button>
-                    <button class="btn btn-debug" onclick="debugGame()">
-    <i class="fas fa-bug"></i> Debug
-</button>
                 </div>
             </div>
             
@@ -767,6 +754,7 @@
                 }
             }
         });
+        
 
         // Initialize user system
         function initializeUserSystem() {
@@ -806,45 +794,91 @@
 
     <!-- Script includes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <script src="js/hoan-chinh-co-tuong.js"></script>
     <script src="js/loginData.js"></script>
     <script src="js/config.js"></script>
-	<script src="js/board-setup.js"></script>
-	<script src="js/chess-game.js"></script>
+    <script src="js/board-setup.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/game.js"></script>
     <script src="js/ai.js"></script>
     <script src="js/online.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/hoan-chinh-co-tuong.js"></script>
 
-    <!-- Debug script -->
+    <!-- Game Ready Monitor -->
     <script>
-        // Debug helper
-        console.log("=== CO TUONG ONLINE LOADED ===");
-        console.log("User button:", document.getElementById('userBtn'));
-        console.log("User menu:", document.getElementById('userMenu'));
-        
-        // Test function
-        window.testUserMenu = function() {
-            console.log("Testing user menu...");
-            toggleUserMenu();
-        };
-    </script>
-	<!-- Move Instruction Panel -->
-<div id="moveInstructionPanel" class="move-instruction-panel">
-    <div id="instructionContent">
-        <h4><i class="fas fa-graduation-cap"></i> Hướng dẫn nước đi</h4>
-        <p id="instructionText">Chọn một quân cờ để xem các nước đi có thể</p>
-        <div id="pieceRules"></div>
-    </div>
-    <button class="btn btn-small" onclick="hideInstruction()" style="margin-top: 10px;">
-        <i class="fas fa-times"></i> Đóng
-    </button>
-</div>
+        console.log("=== GAME READY MONITOR START ===");
 
-<!-- Piece Tooltip -->
-<div id="pieceTooltip" class="piece-tooltip"></div>
+        // Monitor for game readiness
+        let checkAttempts = 0;
+        const maxAttempts = 50; // 50 * 200ms = 10 seconds
+
+        const gameReadyMonitor = setInterval(() => {
+            checkAttempts++;
+
+            const isGameReady = window.coTuongGame && 
+                              typeof window.newGame === 'function' &&
+                              typeof window.undoMove === 'function' &&
+                              typeof window.showHint === 'function' &&
+                              typeof window.offerDraw === 'function' &&
+                              typeof window.surrender === 'function';
+
+            if (isGameReady) {
+                console.log(`✅ Game ready after ${checkAttempts} checks!`);
+                clearInterval(gameReadyMonitor);
+
+                // Hide loading screen
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        loadingScreen.style.pointerEvents = 'none';
+                        loadingScreen.style.transition = 'opacity 0.5s ease';
+                    }, 300);
+                }
+
+                // Show ready message
+                if (typeof toastr !== 'undefined') {
+                    toastr.success("✅ Game ready! Click pieces to start playing.", "Game Ready");
+                }
+            } else {
+                if (checkAttempts % 10 === 0) {
+                    console.log(`⏳ Waiting for game... (${checkAttempts}/${maxAttempts})`);
+                }
+            }
+
+            // Timeout after max attempts
+            if (checkAttempts >= maxAttempts) {
+                clearInterval(gameReadyMonitor);
+                console.error("❌ Game initialization timeout!");
+
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    const loadingText = document.getElementById('loadingText');
+                    if (loadingText) {
+                        loadingText.textContent = "❌ Error loading game. Please refresh page.";
+                        loadingText.style.color = '#e53e3e';
+                    }
+                }
+
+                if (typeof toastr !== 'undefined') {
+                    toastr.error("Failed to initialize game. Please refresh the page.");
+                }
+            }
+        }, 200);
+
+        // Export game status checker
+        window.getGameStatus = function() {
+            return {
+                initialized: !!window.coTuongGame,
+                functionsReady: typeof window.newGame === 'function',
+                loadTime: checkAttempts * 200,
+                checks: checkAttempts
+            };
+        };
+
+        console.log("=== GAME READY MONITOR ACTIVE ===");
+    </script>
 
 </body>
 </html>

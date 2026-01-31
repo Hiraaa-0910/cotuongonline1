@@ -1149,6 +1149,8 @@ function initGame() {
 let chessGame;
 
 // Initialize when DOM is loaded
+// DISABLED: This initialization is handled by hoan-chinh-co-tuong.js to avoid conflicts
+/*
 document.addEventListener('DOMContentLoaded', () => {
     chessGame = new ChessGame();
     
@@ -1258,7 +1260,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chessGame.saveGameSettings();
         toastr.info(chessGame.state.musicEnabled ? 'Đã bật nhạc nền' : 'Đã tắt nhạc nền');
     };
-});
+}); // DISABLED: End of commented-out game.js initialization
+*/
 
 // ========== CHESS MOVEMENT SYSTEM ==========
 

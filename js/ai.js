@@ -147,11 +147,11 @@ class AdvancedChessAI {
             
             for (const move of sortedMoves) {
                 const captured = this.simulateMove(move);
-                const eval = this.alphaBeta(depth - 1, alpha, beta, false);
+                const evalScore = this.alphaBeta(depth - 1, alpha, beta, false);
                 this.undoMove(move, captured);
                 
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
+                maxEval = Math.max(maxEval, evalScore);
+                alpha = Math.max(alpha, evalScore);
                 
                 if (beta <= alpha) {
                     break; // Beta cut-off
@@ -166,11 +166,11 @@ class AdvancedChessAI {
             
             for (const move of sortedMoves) {
                 const captured = this.simulateMove(move);
-                const eval = this.alphaBeta(depth - 1, alpha, beta, true);
+                const evalScore = this.alphaBeta(depth - 1, alpha, beta, true);
                 this.undoMove(move, captured);
                 
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
+                minEval = Math.min(minEval, evalScore);
+                beta = Math.min(beta, evalScore);
                 
                 if (beta <= alpha) {
                     break; // Alpha cut-off

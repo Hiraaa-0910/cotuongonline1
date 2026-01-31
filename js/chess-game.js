@@ -548,8 +548,10 @@ class ChessGame {
         this.showMessage(`Lượt của ${this.currentPlayer === 'red' ? 'ĐỎ' : 'ĐEN'}`);
         
         // Nếu chơi với AI và đến lượt đen
-        if (this.currentPlayer === 'black' && this.gameMode === 'ai') {
-            setTimeout(() => this.makeAIMove(), 500);
+        if (this.playWithAI && this.currentPlayer === this.aiColor) {
+    setTimeout(() => {
+        this.makeAIMove();
+    }, 500);
         }
     }
     
@@ -782,6 +784,8 @@ class ChessGame {
 // Khởi tạo game
 let chessGameInstance;
 
+// DISABLED: This initialization is handled by hoan-chinh-co-tuong.js to avoid conflicts
+/*
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Initializing Chess Game...");
     
@@ -793,7 +797,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Gắn sự kiện cho các nút
         setupGameControls();
     }, 500);
-});
+}); // DISABLED: End of commented-out chess-game.js initialization
+*/
 
 // Thiết lập controls
 function setupGameControls() {

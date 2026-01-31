@@ -179,11 +179,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;   /* 🔥 DÒNG QUAN TRỌNG NHẤT */
     z-index: 2;
 }
+
 
 .coordinate {
     position: absolute;
@@ -332,6 +334,12 @@
     background: rgba(0, 0, 0, 0.3);
     border-radius: var(--border-radius);
 }
+.game-controls {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+}
+
 
 .game-controls .btn {
     min-width: 120px;
@@ -647,13 +655,15 @@
 }
 
 .red-piece {
-    color: #C62828;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: #FF3333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    font-weight: 900;
 }
 
 .black-piece {
-    color: #212121;
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+    color: #000000;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    font-weight: 900;
 }
 
 /* Quân cờ được chọn */
@@ -884,13 +894,15 @@
 }
 
 .red-quan {
-    color: #C62828;
-    text-shadow: 1px 1px 3px rgba(198, 40, 40, 0.3);
+    color: #FF3333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    font-weight: 900;
 }
 
 .black-quan {
-    color: #212121;
-    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.3);
+    color: #000000;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    font-weight: 900;
 }
 
 /* Quân được chọn */
@@ -1028,20 +1040,37 @@
 
 /* Board squares */
 .board-square.light {
-    background: #F5DEB3;
+    background: #FAEBD7;
 }
 
 .board-square.dark {
-    background: #D2B48C;
+    background: #CD853F;
 }
 
 .board-square.song {
-    background: rgba(135, 206, 235, 0.1);
+    background: rgba(135, 206, 235, 0.2);
+    border: 1px dashed rgba(135, 206, 235, 0.5);
+}
+
+.board-square.song.light {
+    background: rgba(135, 206, 235, 0.3);
+}
+
+.board-square.song.dark {
+    background: rgba(135, 206, 235, 0.25);
 }
 
 .board-square.cung {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.3);
     position: relative;
+}
+
+.board-square.cung.light {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.board-square.cung.dark {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .board-square.cung::before {
@@ -1055,4 +1084,55 @@
     border: 2px dashed rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     pointer-events: none;
+}
+
+/* FIX KHÔNG CLICK ĐƯỢC NÚT */
+.board-overlay {
+    pointer-events: none !important;
+}
+
+#loadingScreen {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* ========== SHAKE EFFECT ========== */
+@keyframes shake-board-anim {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-5px, -5px); }
+    20% { transform: translate(5px, 5px); }
+    30% { transform: translate(-5px, 5px); }
+    40% { transform: translate(5px, -5px); }
+    50% { transform: translate(-5px, 0); }
+    60% { transform: translate(5px, 0); }
+    70% { transform: translate(0, 5px); }
+    80% { transform: translate(0, -5px); }
+    90% { transform: translate(-2px, 0); }
+    100% { transform: translate(0, 0); }
+}
+
+.shake-effect {
+    animation: shake-board-anim 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* ========== FIREWORKS EFFECT ========== */
+.firework-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 6px currentColor;
+    animation: firework-explode 1s ease-out forwards;
+}
+
+@keyframes firework-explode {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* ========== LAST MOVE HIGHLIGHT ========== */
+.board-square.last-move {
+    background-color: rgba(155, 89, 182, 0.4) !important; /* Màu tím nhạt */
 }
